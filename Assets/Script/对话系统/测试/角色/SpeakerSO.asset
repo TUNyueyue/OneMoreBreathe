@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fccd0112e399da48b06bb3825f81a1e, type: 3}
+  m_Name: SpeakerSO
+  m_EditorClassIdentifier: 
+  _name: "\u6D77\u9A6C"
+  icon: {fileID: 21300000, guid: f8616f5ffbe5a0043a81c14e000c9abf, type: 3}
+  oneWordSpeakTime: 0.1

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Mineral : MonoBehaviour,IMinable
 {
     [SerializeField]int durability;
-    [SerializeField] GameObject diamond;
+    [SerializeField] GameObject dropItem;
     public int Durability
     {
         get => durability;
@@ -23,7 +23,7 @@ public class Mineral : MonoBehaviour,IMinable
     {
     if(Durability<=0)
         {
-            Instantiate(diamond,this.transform.position,Quaternion.identity);
+            Instantiate(dropItem,this.transform.position,Quaternion.identity);
             Destroy(this.gameObject);
         }
     }//ÏÈ¼òµ¥Ð´Ð´

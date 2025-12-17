@@ -7,8 +7,8 @@ public class Rope : MonoBehaviour
 {
     //暂不实现物理效果
     LineRenderer line;
-    //Vector2 startP;
-    //Vector2 endP;
+    Vector2 startP;
+    Vector2 endP;
 
 
 
@@ -43,8 +43,5 @@ public class Rope : MonoBehaviour
             line.positionCount = 0;
         this.gameObject.SetActive(isTied);
     }
-
-
-
 
 }

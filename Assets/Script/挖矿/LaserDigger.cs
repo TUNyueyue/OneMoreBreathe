@@ -21,7 +21,7 @@ public class LaserDigger : Digger
     }
     void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.Space))
         {
             //我愿称之为棍母代码，已加入Java赤石概念全家桶
         }

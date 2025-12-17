@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//猜你在找：查找快捷键ctrl+F
 
 public class SpaceBeing : SpaceItem, IControllable, ICamerable
 {
@@ -24,7 +25,8 @@ public class SpaceBeing : SpaceItem, IControllable, ICamerable
     [SerializeField] float advanceForce = 10f;
     [SerializeField] float roationSpeed = 10f;
     [SerializeField] float moveSpeed = 5f;
-    float impulseScale = 0.3f;
+    [SerializeField] float pullVelocity = 1f;
+    [SerializeField] float impulseScale = 0.3f;
 
     enum MoveState { inPlanet, outPlanet };
     MoveState state;
@@ -33,6 +35,7 @@ public class SpaceBeing : SpaceItem, IControllable, ICamerable
     public event Action<Camera> onPull;
     //注意这是在pull相机
 
+  
     protected override void Awake()
     {
         base.Awake();
@@ -48,7 +51,7 @@ public class SpaceBeing : SpaceItem, IControllable, ICamerable
         var pickableItem = collider.gameObject.GetComponent<IPickable>();
         if (pickableItem != null)
         {
-            pickableItem.OnPickUp();
+            pickableItem.OnPickUp(this);       
         }
     }
     //简单写写
@@ -59,16 +62,50 @@ public class SpaceBeing : SpaceItem, IControllable, ICamerable
             this.transform.position = craftTrans.position;
         isTied = true;
         this.transform.up=craftTrans.up;
-        rb.AddForce(this.craftTrans.up * advanceForce * impulseScale * 5f, ForceMode2D.Impulse);
+        rb.AddForce(this.craftTrans.up * advanceForce * impulseScale, ForceMode2D.Impulse);
         //弹射起步！！！！
     }
     //这里的Into不是进入飞船而是从飞船切换到这个控制器
 
     public void OnLeft()
     {
+        StartCoroutine(PulledBackToCraft());
+    }
+    public float ReturnPullBackDuration()
+    {
+        Vector3 startP = this.transform.position;
+        Vector3 endP = craftTrans.position;
+        return Vector2.Distance(startP, endP) / pullVelocity;
+    }
+    //添加绳子拉回协程
+    IEnumerator PulledBackToCraft()
+    {
+        float time = 0f;
+        float duration = ReturnPullBackDuration();
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+            rb.position = Vector3.Lerp(this.transform.position, craftTrans.position, t);
+            yield return null;
+        }
+        Debug.Log("PullOver！");
         isTied = false;
         rope.SetTied(isTied);
+        RemovePickableFromChildren();
+        //回到飞船，清除捡到的东西
         this.gameObject.SetActive(false);
+    }
+    void RemovePickableFromChildren()
+    {
+        foreach (Transform child in transform)
+        {
+            var pickable = child.GetComponent<IPickable>();
+            if (pickable != null)
+            {
+                Destroy(child.gameObject);
+            }
+        }
     }
     void FixedUpdate()
     {
@@ -120,28 +157,31 @@ public class SpaceBeing : SpaceItem, IControllable, ICamerable
             { rb.angularVelocity = -roationSpeed * 10f; }
             else if (Xinput == -1)
             { rb.angularVelocity = roationSpeed * 10f; }
-            else
-            {
-                rb.angularVelocity = 0;
-            }
+            else { rb.angularVelocity = 0f; }
 
         }
     }
     public void OnGetKeySpace()
     {
-        if (state == MoveState.inPlanet)
-        { rb.AddForce(this.transform.up * advanceForce); }
-        if (state == MoveState.outPlanet)
-        {
-            //rb.AddForce(this.transform.up * advanceForce); 
-        }
+      
     }
     public void OnGetKeyDownSpace()
     {
         if (state == MoveState.inPlanet)
         { }
         if (state == MoveState.outPlanet)
-        { rb.AddForce(this.transform.up * advanceForce * impulseScale, ForceMode2D.Impulse); }
+        { 
+            //rb.AddForce(this.transform.up * advanceForce * impulseScale, ForceMode2D.Impulse); 
+        }
+    }
+    public void OnGetKeyW()
+    {
+        if (state == MoveState.inPlanet)
+        { rb.AddForce(this.transform.up * advanceForce); }
+        if (state == MoveState.outPlanet)
+        {
+            rb.AddForce(this.transform.up * advanceForce / 2);
+        }
     }
     public override void OnAttract(Attractor attractor)
     {
@@ -170,7 +210,9 @@ public class SpaceBeing : SpaceItem, IControllable, ICamerable
         camera.gameObject.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -10f);
         camera.gameObject.transform.rotation = Quaternion.identity;
         float distance = Vector2.Distance(this.transform.position, craftTrans.position);
-        camera.orthographicSize = 5f * (distance+1f) / 5f;
+        camera.orthographicSize = 5f * (distance+3f) / 5f;//防止镜头太近，+5f接近飞船镜头
+        if (camera.orthographicSize > 10f)
+            camera.orthographicSize = 10f;//防止镜头太远
     }
     //上面俩接口方法
 

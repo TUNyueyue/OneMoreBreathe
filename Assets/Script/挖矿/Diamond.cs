@@ -5,14 +5,17 @@ using UnityEngine;
 
 public class Diamond : MonoBehaviour,IPickable
 {
-    public void OnPickUp()
+    [SerializeField] LevelData levelData;
+    Collider2D _collider;
+    public void OnPickUp(SpaceBeing player)
     {
-         Destroy(this.gameObject);
+        levelData.diamondNum++;
+        transform.SetParent(player.transform);
     }
 
     void Start()
     {
-        
+        _collider = GetComponent<Collider2D>();
     }
 
    

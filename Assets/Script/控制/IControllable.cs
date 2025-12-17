@@ -15,8 +15,11 @@ public interface IControllable
     //怎么还有默认实现的啊，我是懒狗
     void OnGetKeyW()
     { }
+    void OnGetKeyS()
+    { }
     void OnGetHorizontal(float Xinput);
 
+  
     
 
 }

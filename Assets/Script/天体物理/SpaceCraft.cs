@@ -65,11 +65,11 @@ public class SpaceCraft : SpaceItem, IControllable, ICamerable
 
     public void OnGetKeySpace()
     {
-        rb.AddForce(this.transform.up * advancePower);
+        digger.Dig();
     }
     public void OnGetKeyW()
     {
-        digger.Dig();
+        rb.AddForce(this.transform.up * advancePower);
     }
     public override void OnAttract(Attractor attractor)
     {

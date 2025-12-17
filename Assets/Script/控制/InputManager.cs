@@ -12,13 +12,15 @@ public class InputManager : MonoBehaviour
     
 
     float Xinput;
-    enum SpaceKeyState { None, Down, Hold };
-    SpaceKeyState spaceState;
+
+
+
+    [SerializeField]LevelData levelData;
     void Start()
     {
         controller = spaceBeing;
         spaceCamera.subject = spaceBeing;
-        spaceState = SpaceKeyState.None;
+
     }
 
 
@@ -28,19 +30,18 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            spaceState = SpaceKeyState.Down;
+
             controller.OnGetKeyDownSpace();
             Debug.Log("Jump!");
         }
+
         else if (Input.GetKey(KeyCode.Space))
         {
-            spaceState = SpaceKeyState.Hold;
+            controller.OnGetKeySpace();
+            levelData.fuelValue -= 0.1f;
+            //暂时先放这
         }
-        if (Input.GetKey(KeyCode.W))
-        {
-            controller.OnGetKeyW();
-        }
-
+ 
         //双space检测可能会出现问题
 
 
@@ -51,23 +52,37 @@ public class InputManager : MonoBehaviour
             {
                 controller = spaceBeing;
                 spaceCamera.subject = spaceBeing;
+                controller.OnInto();
             }
             else
             {
-                controller = spaceCraft;
-                spaceCamera.subject = spaceCraft;
+                StartCoroutine(WaitToCraft(spaceBeing.ReturnPullBackDuration()));
             }
-            controller.OnInto();
+            
         }
-        //这部分记得拆开
+        //这部分记得拆开,哎呦这怎么还有相机的逻辑啊难分啊
     }
-
+    IEnumerator WaitToCraft(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        spaceCamera.subject = spaceCraft;
+        controller = spaceCraft;
+        controller.OnInto();
+    }
+    //把拉绳子的协程带过来
     void FixedUpdate()
     {
         controller.OnGetHorizontal(Xinput);
-        if (spaceState == SpaceKeyState.Hold)
-            controller.OnGetKeySpace();
-        spaceState = SpaceKeyState.None;
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            controller.OnGetKeyW();
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            controller.OnGetKeyS();
+        }
+
     }
 
     IEnumerator LandOnPlanet()
