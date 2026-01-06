@@ -6,6 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: "Assets/Scenes/\u6D4B\u8BD5/OneMoreBreath.unity"
+    guid: dfbda440eb890794aa704934b1eb0b86
+  - enabled: 1
+    path: "Assets/Scenes/\u5173\u5361/FirstLevel.unity"
+    guid: 6a5e09c7772180d479e8e8d3959c43f4
+  - enabled: 1
+    path: "Assets/Scenes/\u5173\u5361/SecondLevel.unity"
+    guid: bd0d212e01e828c4d8409e0102199e3c
+  - enabled: 1
+    path: "Assets/Scenes/\u5173\u5361/ThirdLevel.unity"
+    guid: e70002286a712444fbb1966227f1fef1
   m_configObjects: {}

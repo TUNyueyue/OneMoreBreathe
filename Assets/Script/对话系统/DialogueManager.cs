@@ -7,7 +7,7 @@ using UnityEngine.TextCore.Text;
 
 public class DialogueManager : MonoBehaviour
 {
-    [SerializeField] DialogueListSO rootDialogues;
+    DialogueListSO defaultDialogues;
     [SerializeField] DialogueUI dialogueUI;
     [SerializeField] UnityEvent onDialogueStart;
     [SerializeField] UnityEvent onDialogueEnd;
@@ -16,32 +16,44 @@ public class DialogueManager : MonoBehaviour
     DialogueNodeSO currentDialogue;
     int dialogueIndex = 0;
 
-    void Start()
+    public static DialogueManager instance;
+    void Awake()
     {
-        StartDialogue();
+        if (instance != null)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
     }
 
-    public void StartDialogue(DialogueListSO startDialogues = null)
+    public void SetDefaultDialogue(DialogueListSO defaultDialogues)
     {
-        if (startDialogues == null)
-            currentDialogues = rootDialogues;
-        else
-            currentDialogues = startDialogues;
+        this.defaultDialogues = defaultDialogues;
+    }
 
+    public void StartDefalutDialogue()
+    {
+        StartDialogue(defaultDialogues);
+    }
+
+    public void StartDialogue(DialogueListSO startDialogues)
+    {
+        currentDialogues = startDialogues;
         dialogueIndex = 0;
-
-
         //数据更新
         currentDialogue = currentDialogues.nodeList[dialogueIndex];
         dialogueUI.ShowDialogue();
         dialogueUI.UpdateDialogueUI(currentDialogue);
         onDialogueStart?.Invoke();
-    
+
     }
 
     public void MoveToNextDialogue()
-    { 
-    dialogueIndex++;
+    {
+        dialogueIndex++;
         if (dialogueIndex >= currentDialogues.nodeList.Count)
         {
             CompleteDialogue();
@@ -57,16 +69,16 @@ public class DialogueManager : MonoBehaviour
         currentDialogues = currentDialogue.options[optionIndex].dialogues;
         currentDialogue = currentDialogues.nodeList[dialogueIndex];
         dialogueUI.UpdateDialogueUI(currentDialogue);
-        
+
     }
     public void CompleteDialogue()
     {
 
-        dialogueUI.HideDialogue();        
+        dialogueUI.HideDialogue();
         onDialogueEnd?.Invoke();
     }
 
-   
+
 
 
 
